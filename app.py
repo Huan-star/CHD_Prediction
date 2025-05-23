@@ -3,7 +3,7 @@ import joblib
 import pandas as pd
 import numpy as np
 import seaborn as sns
-import shap  # 添加shap库
+import shap
 import matplotlib.pyplot as plt
 
 # Set page configuration
@@ -21,15 +21,43 @@ st.set_page_config(
 
 
 def load_artifacts():
+    # 获取项目根目录
     project_root = os.path.dirname(os.path.abspath(__file__))
+    
+    # 构建各文件路径
     model_path = os.path.join(project_root, 'analysis_models', 'stacking_classifier.pkl')
     scaler_path = os.path.join(project_root, 'analysis_models', 'minmax_scaler.pkl')
     background_path = os.path.join(project_root, 'analysis_models', 'background_data.pkl')
+    
+    # 调试输出（仅在开发/部署时使用，生产环境可删除）
+    st.write(f"项目根目录: {project_root}")
+    st.write(f"模型路径: {model_path}")
+    st.write(f"Scaler路径: {scaler_path}")
+    st.write(f"Background路径: {background_path}")
+    
+    # 检查文件是否存在
+    for path in [model_path, scaler_path, background_path]:
+        if not os.path.exists(path):
+            st.error(f"文件不存在: {path}")
+            # 列出目录内容辅助调试
+            if os.path.exists(os.path.dirname(path)):
+                st.write(f"{os.path.dirname(path)} 目录内容:")
+                st.write(os.listdir(os.path.dirname(path)))
+            else:
+                st.error(f"目录不存在: {os.path.dirname(path)}")
+            return None, None, None, None
+    
+    # 加载文件
     model = joblib.load(model_path)
     scaler = joblib.load(scaler_path)
     background = joblib.load(background_path)
+    
+    # 创建解释器
     explainer = shap.KernelExplainer(model.predict_proba, background)
+    
     return model, scaler, explainer, background
+
+# 加载模型和工具
 model, scaler, explainer, background = load_artifacts()
 
 # Your ten features
