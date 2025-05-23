@@ -1,64 +1,54 @@
 # CHD_Prediction
 Machine learning coronary heart disease prediction system
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Python Version](https://img.shields.io/badge/Python-3.11%2B-green.svg)](https://www.python.org/)
-[![ML Libraries](https://img.shields.io/badge/ML-Scikit--learn%20%7C%20XGBoost%20%7C%20LightGBM%20%7C%20CatBoost-orange.svg)](https://scikit-learn.org/)
 
 
-## 项目简介  
-本项目基于Kaggle的Framingham心脏研究数据，结合机器学习与SHAP可解释性算法，构建了一个高精度、可解释的**冠心病早期预测系统**。通过集成梯度提升分类器、随机森林、XGBoost等模型，结合数据预处理与特征工程优化，实现了对冠心病风险的精准预测，并开发了交互式网页工具，推动冠心病防治从“治疗中心”向“预防中心”转型。
+## Project Introduction  
+The AI-CHD project builds a high-precision and interpretable **early prediction system for coronary heart disease** based on the Framingham Heart Study data from Kaggle, combining machine learning with SHAP interpretability algorithms. By integrating gradient boosting classifiers, random forests, XGBoost and other models, and optimizing data preprocessing and feature engineering, it achieves accurate prediction of coronary heart disease risk. An interactive web tool is developed to promote the transformation of coronary heart disease prevention and treatment from a "treatment center" to a "prevention center".
 
 
-## 核心技术架构  
-### 1. 数据处理与特征工程  
-- **数据预处理**：  
-  - 缺失值填补（众数填充）、异常值剔除（IQR法）、重复值处理。  
-  - 类别不平衡解决：采用**SMOTEENN + SMOTETomek**两阶段重采样技术，平衡正负样本比例。  
-- **特征筛选**：  
-  - 创新采用**卡方检验 + 互信息 + F检验**双层筛选方法，综合评分选取前10项核心特征（如收缩压、年龄、血糖等）。  
-  - 特征标准化：MinMaxScaler归一化处理。  
+## Core Technical Architecture  
+### 1. Data Processing and Feature Engineering  
+- **Data Preprocessing**:  
+  - Missing value imputation (mode filling), outlier removal (IQR method), duplicate value handling.  
+  - Class imbalance solution: Adopting **SMOTEENN + SMOTETomek** two-stage resampling technology to balance the ratio of positive and negative samples.  
+- **Feature Selection**:  
+  - **Chi-square test + mutual information + F-test** two-layer screening method, comprehensively scoring and selecting the top 10 core features (such as systolic blood pressure, age, blood glucose, etc.).  
+  - Feature standardization: MinMaxScaler normalization processing.  
 
-### 2. 机器学习模型  
-- **单模型训练**：涵盖Logistic Regression、KNN、SVM、决策树、集成学习等10种算法。  
-- **模型集成**：  
-  - 采用**Stacking堆叠集成技术**，以随机森林、XGBoost、梯度提升树为基模型，逻辑回归为元模型。  
-  - 内部验证性能：准确率93.40%，AUC 0.9775，F1分数0.9350。  
-  - 外部验证：在南通附属医院200例临床样本中，准确率达88.62%，验证跨队列鲁棒性。  
+### 2. Machine Learning Models  
+- **Single Model Training**: Covers algorithms such as Logistic Regression, KNN, SVM, decision trees, and ensemble learning.  
+- **Model Ensemble**:  
+  - Adopting **Stacking ensemble technique**, using random forest, XGBoost, and gradient boosting tree as base models, and logistic regression as the meta-model.  
+  - Internal validation performance: Accuracy 94.24%, AUC 0.9773, F1 score 0.9440.  
+  - External validation: In 200 clinical samples from Nantong Affiliated Hospital, the accuracy reached 88.62%, verifying cross-cohort robustness.  
 
-### 3. 可解释性分析（SHAP）  
-- **全局解释**：量化特征重要性，揭示年龄、收缩压、血糖、总胆固醇为核心风险因子。  
-- **单样本解释**：通过SHAP力导向图解析个体风险驱动因素，辅助医生制定个性化干预方案。  
-- **模型对比**：不同基模型对特征的敏感性差异可视化（如XGBoost对血糖更敏感，随机森林对高血压病史捕捉较弱）。  
+### 3. Interpretability Analysis (SHAP)  
+- **Global Explanation**: Quantifying feature importance, revealing that age, systolic blood pressure, blood glucose, and total cholesterol are core risk factors.  
+- **Single Sample Explanation**: Analyzing individual risk driving factors through SHAP force-directed graphs to assist doctors in formulating personalized intervention plans.  
+- **Model Comparison**: Visualization of sensitivity differences of different base models to features (e.g., XGBoost is more sensitive to blood glucose, while random forest has weaker capture of hypertension history).  
 
-### 4. 网页应用开发  
-- **功能**：输入10项生理指标（如血压、血糖、吸烟量等），实时输出风险预测结果、SHAP解释图及个性化健康建议。  
-- **技术栈**：Flask框架 + HTML/CSS + ECharts可视化，支持本地化部署。  
-
-
-## 关键成果  
-| 指标         | 集成模型表现       |
-|--------------|--------------------|
-| 准确率       | 0.9340            |
-| AUC          | 0.9775            |
-| 敏感度（Sn） | 0.9395            |
-| 特异度（Sp） | 0.9282            |
-| F1分数       | 0.9350            |
-
-- **临床价值**：通过特征交互效应分析（如血糖与总胆固醇协同升高加剧风险），为高危人群分层提供量化依据。  
-- **工具开源**：开发免费易用的冠心病预测网页，降低基层医疗筛查门槛。  
+### 4. Web Application Development  
+- **Functions**: Input 10 physiological indicators (such as blood pressure, blood glucose, smoking amount, etc.), and real-time output risk prediction results, SHAP explanation diagrams, and personalized health suggestions.  
 
 
-## 项目结构  
+## Key Achievements  
+| Indicator      | Integrated Model Performance |
+|----------------|------------------------------|
+| Accuracy       | 0.9424                       |
+| AUC            | 0.9773                       |
+| Sensitivity (Sn)| 0.9426                       |
+| Specificity (Sp)| 0.9423                       |
+| F1 Score       | 0.9440                       |
+
+
+## Project Structure  
 project/
-├─ data/ # 原始数据及预处理后数据集
-├─ models/ # 训练好的模型文件（.pkl）
-├─ src/ # 核心代码
-│ ├─ data_preprocessing.py # 数据清洗与特征工程
-│ ├─ model_training.py # 模型训练与集成
-│ ├─ shap_explanation.py # SHAP 解释分析
-│ └─ web_app/ # 网页应用代码
-└─ requirements.txt # 依赖库列表
+├─ data/
+├─ analysis_models/ # Core code
+│ ├─ # Trained model files (.pkl)
+│ ├─ app.py # Web application code
+│ └─ CHD_analysis.ipynb/ # Data processing, model training and integration
 
-## 启动网页应用
+## Launch Web Application
+```bash
 streamlit run app.py
-
