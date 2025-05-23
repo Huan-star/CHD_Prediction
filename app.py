@@ -20,7 +20,7 @@ st.set_page_config(
 )
 
 def load_artifacts():
-    model = joblib.load('./CHD_analysis/analysis_models/stacking_classifier.pkl')
+    model = joblib.load('stacking_classifier.pkl')
     scaler = joblib.load('./CHD_analysis/analysis_models/minmax_scaler.pkl')
     background = joblib.load('./CHD_analysis/analysis_models/background_data.pkl')  # 加载背景数据
     explainer = shap.KernelExplainer(model.predict_proba, background)  # 创建解释器
