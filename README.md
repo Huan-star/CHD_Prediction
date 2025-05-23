@@ -40,14 +40,14 @@ The AI-CHD project builds a high-precision and interpretable **early prediction 
 | Specificity (Sp)| 0.9423                       |
 | F1 Score       | 0.9440                       |
 
+## Directory Description
 
-## Project Structure  
-project/
-├─ data/
-├─ analysis_models/ # Core code
-│ ├─ # Trained model files (.pkl)
-│ ├─ app.py # Web application code
-│ └─ CHD_analysis.ipynb/ # Data processing, model training and integration
+- `data/`: Contains datasets used for training and testing the models.
+- `analysis_models/`: Core code directory.
+  - `trained_models/`: Stores trained model files.
+  - `app.py`: Web application code for deploying the model.
+  - `CHD_analysis.ipynb`: Jupyter notebook for data processing, model training, and integration.
+- `README.md`: Project documentation file.
 
 ## Launch Web Application
 ```bash
