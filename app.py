@@ -19,14 +19,18 @@ st.set_page_config(
     }
 )
 
-def load_artifacts():
-    model = joblib.load('stacking_classifier.pkl')
-    scaler = joblib.load('./CHD_analysis/analysis_models/minmax_scaler.pkl')
-    background = joblib.load('./CHD_analysis/analysis_models/background_data.pkl')  # 加载背景数据
-    explainer = shap.KernelExplainer(model.predict_proba, background)  # 创建解释器
-    return model, scaler, explainer,background
 
-model, scaler, explainer,background= load_artifacts()
+def load_artifacts():
+    project_root = os.path.dirname(os.path.abspath(__file__))
+    model_path = os.path.join(project_root, 'analysis_models', 'stacking_classifier.pkl')
+    scaler_path = os.path.join(project_root, 'analysis_models', 'minmax_scaler.pkl')
+    background_path = os.path.join(project_root, 'analysis_models', 'background_data.pkl')
+    model = joblib.load(model_path)
+    scaler = joblib.load(scaler_path)
+    background = joblib.load(background_path)
+    explainer = shap.KernelExplainer(model.predict_proba, background)
+    return model, scaler, explainer, background
+model, scaler, explainer, background = load_artifacts()
 
 # Your ten features
 features = ['sysBP', 'age', 'totChol', 'diaBP', 'glucose', 'cigsPerDay', 'prevalentHyp', 'BPMeds', 'BMI', 'diabetes']
