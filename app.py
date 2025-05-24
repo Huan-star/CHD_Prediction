@@ -77,7 +77,7 @@ all_background_data = []
 def render_header():
     col1, col2 = st.columns([1, 3])
     with col1:
-        st.image("./CHD_analysis/analysis_models/heart.jpg", width=100)  # Heart icon
+        st.image("./heart.jpg", width=100)  # Heart icon
     with col2:
         st.title("Coronary Heart Disease Risk Prediction System")
         st.markdown("""
