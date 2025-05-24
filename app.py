@@ -21,44 +21,65 @@ st.set_page_config(
 
 
 def load_artifacts():
-    # 获取项目根目录
+    """加载模型和预处理工具，适应正确的项目结构"""
+    # 获取app.py所在目录（项目根目录）
     project_root = os.path.dirname(os.path.abspath(__file__))
     
-    # 构建各文件路径
+    # 构建模型文件路径（analysis_models与app.py同级）
     model_path = os.path.join(project_root, 'analysis_models', 'stacking_classifier.pkl')
     scaler_path = os.path.join(project_root, 'analysis_models', 'minmax_scaler.pkl')
     background_path = os.path.join(project_root, 'analysis_models', 'background_data.pkl')
     
-    # 调试输出（仅在开发/部署时使用，生产环境可删除）
-    st.write(f"项目根目录: {project_root}")
-    st.write(f"模型路径: {model_path}")
-    st.write(f"Scaler路径: {scaler_path}")
-    st.write(f"Background路径: {background_path}")
+    # 调试输出（部署时可移除）
+    st.write(f"[DEBUG] 项目根目录: {project_root}")
+    st.write(f"[DEBUG] 模型路径: {model_path}")
+    st.write(f"[DEBUG] Scaler路径: {scaler_path}")
     
     # 检查文件是否存在
     for path in [model_path, scaler_path, background_path]:
         if not os.path.exists(path):
-            st.error(f"文件不存在: {path}")
+            st.error(f"❌ 文件不存在: {path}")
             # 列出目录内容辅助调试
-            if os.path.exists(os.path.dirname(path)):
-                st.write(f"{os.path.dirname(path)} 目录内容:")
-                st.write(os.listdir(os.path.dirname(path)))
+            dir_path = os.path.dirname(path)
+            if os.path.exists(dir_path):
+                st.write(f"📂 {dir_path} 目录内容:")
+                st.write(os.listdir(dir_path))
             else:
-                st.error(f"目录不存在: {os.path.dirname(path)}")
+                st.error(f"❌ 目录不存在: {dir_path}")
             return None, None, None, None
     
-    # 加载文件
-    model = joblib.load(model_path)
-    scaler = joblib.load(scaler_path)
-    background = joblib.load(background_path)
+    # 加载模型和数据
+    try:
+        model = joblib.load(model_path)
+        scaler = joblib.load(scaler_path)
+        background = joblib.load(background_path)
+    except Exception as e:
+        st.error(f"🚫 加载文件失败: {str(e)}")
+        return None, None, None, None
     
-    # 创建解释器
-    explainer = shap.KernelExplainer(model.predict_proba, background)
+    # 创建SHAP解释器
+    try:
+        explainer = shap.KernelExplainer(model.predict_proba, background)
+    except Exception as e:
+        st.error(f"🚫 创建解释器失败: {str(e)}")
+        return model, scaler, None, background
     
     return model, scaler, explainer, background
 
-# 加载模型和工具
+# 主程序
+st.title("冠心病风险预测系统")
+
+# 加载模型
+st.write("🔄 正在加载模型...")
 model, scaler, explainer, background = load_artifacts()
+
+if model:
+    st.success("✅ 模型加载成功！")
+    # 后续应用逻辑（如用户输入表单、预测逻辑等）
+    # ...
+else:
+    st.error("❌ 模型加载失败，请检查路径和文件是否存在")
+    
 
 # Your ten features
 features = ['sysBP', 'age', 'totChol', 'diaBP', 'glucose', 'cigsPerDay', 'prevalentHyp', 'BPMeds', 'BMI', 'diabetes']
