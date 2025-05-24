@@ -22,7 +22,6 @@ st.set_page_config(
 
 
 def load_artifacts():
-    # 获取当前文件所在目录的绝对路径
     current_dir = os.path.dirname(__file__)
     model_path = os.path.join(current_dir, 'stacking_classifier.pkl')
     scaler_path = os.path.join(current_dir, 'minmax_scaler.pkl')
