@@ -32,11 +32,11 @@ def load_artifacts():
     background = joblib.load(background_path)
 
     explainer = shap.KernelExplainer(model.predict_proba, background)
-    
+
     return model, scaler, explainer, background
 
 model, scaler, explainer, background = load_artifacts()
-    
+
 
 # Your ten features
 features = ['sysBP', 'age', 'totChol', 'diaBP', 'glucose', 'cigsPerDay', 'prevalentHyp', 'BPMeds', 'BMI', 'diabetes']
@@ -142,64 +142,6 @@ def input_features():
 
 # Display input values visualization
 def display_input_visualization(inputs):
-    st.subheader("🔮 SHAP Force Plot After Input")
-
-    input_data = pd.DataFrame([inputs])
-    input_data_scaled = scaler.transform(input_data.copy())
-
-    shap_values = explainer.shap_values(input_data_scaled)
-
-    if isinstance(shap_values, list) and len(shap_values) > 1:
-        shap_values_single = shap_values[1]
-    else:
-        shap_values_single = shap_values
-
-    shap_values_class1 = shap_values_single[0, :, 1]
-
-    if len(shap_values_class1) != len(features):
-        raise ValueError(f"The length of the SHAP value（{len(shap_values_class1)}）with the number of features({len(features)})mismatching!")
-
-    sample_explanation = shap.Explanation(
-        values=shap_values_class1,
-        base_values=explainer.expected_value[1],
-        data=input_data_scaled[0],
-        feature_names=features
-    )
-
-    plt.figure(figsize=(15, 8))
-
-    shap.force_plot(
-        sample_explanation.base_values,
-        sample_explanation.values,
-        sample_explanation.data,
-        feature_names=features,
-        matplotlib=True,
-        text_rotation=15,
-    )
-    plt.tight_layout()
-
-    from io import BytesIO
-    buffer = BytesIO()
-    plt.savefig(buffer, format='png', bbox_inches='tight')
-    plt.close()
-
-    import base64
-    img_str = base64.b64encode(buffer.getvalue()).decode()
-
-    st.markdown(
-        f"""
-        <style>
-            .shap-plot {{
-                width: 90%;
-                height: auto;
-                margin: 0 auto;
-                display: block;
-            }}
-        </style>
-        <img src="data:image/png;base64,{img_str}" class="shap-plot">
-        """,
-        unsafe_allow_html=True
-    )
     st.header("📊 Input Indicator Visualization Analysis")
 
     # Convert to DataFrame
@@ -328,6 +270,62 @@ def predict_and_display(inputs, input_df):
     # Prediction
     prediction = model.predict(input_data_scaled)[0]
     proba = model.predict_proba(input_data_scaled)[0][0]  # Get positive probability
+
+    st.subheader("🔮 SHAP Force Plot After Input")
+    
+    shap_values = explainer.shap_values(input_data_scaled)
+
+    if isinstance(shap_values, list) and len(shap_values) > 1:
+        shap_values_single = shap_values[1]
+    else:
+        shap_values_single = shap_values
+
+    shap_values_class1 = shap_values_single[0, :, 1]
+
+    if len(shap_values_class1) != len(features):
+        raise ValueError(f"The length of the SHAP value（{len(shap_values_class1)}）with the number of features({len(features)})mismatching!")
+
+    sample_explanation = shap.Explanation(
+        values=shap_values_class1,
+        base_values=explainer.expected_value[1],
+        data=input_data_scaled[0],
+        feature_names=features
+    )
+
+    plt.figure(figsize=(15, 8))
+
+    shap.force_plot(
+        sample_explanation.base_values,
+        sample_explanation.values,
+        sample_explanation.data,
+        feature_names=features,
+        matplotlib=True,
+        text_rotation=15,
+    )
+    plt.tight_layout()
+
+    from io import BytesIO
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png', bbox_inches='tight')
+    plt.close()
+
+    import base64
+    img_str = base64.b64encode(buffer.getvalue()).decode()
+
+    st.markdown(
+        f"""
+            <style>
+                .shap-plot {{
+                    width: 90%;
+                    height: auto;
+                    margin: 0 auto;
+                    display: block;
+                }}
+            </style>
+            <img src="data:image/png;base64,{img_str}" class="shap-plot">
+            """,
+        unsafe_allow_html=True
+    )
 
     # Two-column layout
     col1, col2 = st.columns(2)
